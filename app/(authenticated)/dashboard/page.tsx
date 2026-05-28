@@ -1,13 +1,24 @@
 'use client';
 
 import usePageTitle from '@/lib/shell/use-page-title';
+import { Suspense } from 'react';
+import BlockHost from '@/components/blocks/BlockHost';
+import BlockSkeleton from '@/components/blocks/BlockSkeleton';
 
 export default function DashboardPage() {
   usePageTitle('Dashboard');
   
   return (
     <div className="grid grid-cols-12 gap-4 p-6">
-      {[1, 2, 3, 4, 5, 6].map((item) => (
+      {/* AdGuard Stats Block */}
+      <div className="col-span-3">
+        <Suspense fallback={<BlockSkeleton size="md" />}>
+          <BlockHost blockId="adguard.getStats" />
+        </Suspense>
+      </div>
+      
+      {/* Remaining placeholder cards */}
+      {[2, 3, 4, 5, 6].map((item) => (
         <div 
           key={item}
           className={`bg-[color:var(--color-bg-elevated)] border border-[color:var(--color-border)] rounded-md p-4 min-h-32 animate-pulse ${
