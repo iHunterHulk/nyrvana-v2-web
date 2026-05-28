@@ -1,31 +1,37 @@
 // @vitest-environment jsdom
 
-import { render, screen } from '@testing-library/react';
-import { beforeEach, describe, it, expect, vi } from 'vitest';
-import '@testing-library/jest-dom';
+import { render, screen, cleanup } from '@testing-library/react';
+import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 
 import { StreamingAccentBar } from './StreamingAccentBar';
 
-// Mock framer-motion
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ style, ...props }: any) => <div style={style} {...props} data-testid="motion-div" />
+    div: ({ style, animate, ...props }: any) => (
+      <div style={style} data-animate={JSON.stringify(animate)} {...props} data-testid="motion-div" />
+    )
   },
+  AnimatePresence: ({ children }: any) => <>{children}</>,
   useReducedMotion: vi.fn().mockReturnValue(false)
 }));
 
 describe('StreamingAccentBar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => vi.clearAllMocks());
+  afterEach(() => cleanup());
 
-  it('should render when streaming is true', () => {
+  it('renders streaming variant with pulsing animation', () => {
     render(<StreamingAccentBar streaming={true} />);
-    expect(screen.getByTestId('motion-div')).toBeInTheDocument();
+    const div = screen.getByTestId('motion-div');
+    expect(div).toBeInTheDocument();
+    // Pulsing opacity array signals the streaming animation
+    expect(div.getAttribute('data-animate')).toContain('0.6');
+    expect(div.getAttribute('data-animate')).toContain('0.9');
   });
 
-  it('should render when streaming is false', () => {
+  it('renders fade-to-zero variant when not streaming', () => {
     render(<StreamingAccentBar streaming={false} />);
-    expect(screen.getByTestId('motion-div')).toBeInTheDocument();
+    const div = screen.getByTestId('motion-div');
+    expect(div.getAttribute('data-animate')).toContain('"opacity":0');
   });
 });
