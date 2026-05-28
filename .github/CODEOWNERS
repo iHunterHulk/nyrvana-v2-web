@@ -1,0 +1,17 @@
+# Code owners for Nyrvana V2 Web
+
+* @iHunterHulk
+
+# Frontend components
+/components/* @iHunterHulk
+
+# API routes
+/app/api/* @iHunterHulk
+
+# Documentation
+/**/*.md @iHunterHulk
+
+# Configuration files
+/*.config.* @iHunterHulk
+/package.json @iHunterHulk
+/tsconfig.json @iHunterHulk

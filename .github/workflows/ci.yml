@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run typecheck
+        run: npm run typecheck
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run tests
+        run: npm run test
+
+  no-em-dashes:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'allow-dashes') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Find em-dash and en-dash in changed files
+        run: |
+          set -uo pipefail
+          # Get the diff between base and head, list changed files
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base_sha='${{ github.event.pull_request.base.sha }}'
+            head_sha='${{ github.event.pull_request.head.sha }}'
+          else
+            base_sha=$(git rev-parse HEAD~1)
+            head_sha=$(git rev-parse HEAD)
+          fi
+          changed_files=$(git diff --name-only --diff-filter=AM "$base_sha" "$head_sha")
+          if [ -z "$changed_files" ]; then
+            echo "No changed files; skipping."
+            exit 0
+          fi
+          echo "Changed files:"
+          echo "$changed_files"
+          echo ""
+          # Search each file's added lines (not removed) for em/en dash
+          violations=""
+          for f in $changed_files; do
+            if [ ! -f "$f" ]; then
+              continue
+            fi
+            # Skip binary files (heuristic: grep returns "binary file matches" for those)
+            if file -b "$f" | grep -qE 'image|binary'; then
+              continue
+            fi
+            # Find lines with U+2014 (em dash) or U+2013 (en dash)
+            matches=$(grep -nP "[\\x{2013}\\x{2014}]" "$f" 2>/dev/null || true)
+            if [ -n "$matches" ]; then
+              violations="${violations}=== $f ===\n${matches}\n\n"
+            fi
+          done
+          if [ -n "$violations" ]; then
+            echo "::error::PR contains em-dash (U+2014) or en-dash (U+2013) in changed files."
+            echo "::error::SOUL.md and project rules prohibit these characters."
+            echo "::error::Replace with colon, semicolon, comma, period, or sentence break."
+            echo "::error::To bypass (verbatim upstream quote), add the 'allow-dashes' label."
+            printf "%b" "$violations"
+            exit 1
+          fi
+          echo "OK: no em/en dashes in changed files."
