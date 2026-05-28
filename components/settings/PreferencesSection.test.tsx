@@ -2,10 +2,12 @@
  * @vitest-environment jsdom
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 import { PreferencesSection } from './PreferencesSection';
 
 describe('PreferencesSection', () => {
+  afterEach(() => cleanup());
   beforeEach(() => {
     // Clear all cookies
     document.cookie.split(";").forEach((c) => {
