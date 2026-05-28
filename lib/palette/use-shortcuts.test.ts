@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+// @vitest-environment jsdom
 import { useShortcuts } from './use-shortcuts';
 import { renderHook } from '@testing-library/react';
 

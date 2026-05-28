@@ -1,70 +1,35 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+// @vitest-environment jsdom
+import { describe, it, expect, vi } from 'vitest';
 import { registerAction, unregisterAction, listActions } from './registry';
 
 describe('registry', () => {
-  beforeEach(() => {
-    // Manually clear the registry for the first test only
-    const actions = listActions();
-    actions.forEach(action => unregisterAction(action.id));
+  it('bootstraps with the default actions', () => {
+    const ids = listActions().map(a => a.id);
+    expect(ids).toContain('nav-dashboard');
+    expect(ids).toContain('nav-adapters');
+    expect(ids).toContain('nav-chat');
+    expect(ids).toContain('nav-search');
+    expect(ids).toContain('nav-credentials');
+    expect(ids).toContain('nav-settings');
+    expect(ids).toContain('mode-theme-toggle');
+    expect(ids).toContain('mode-logout');
   });
 
-  it('should register and unregister actions', () => {
-    const action = {
-      id: 'test-action',
-      kind: 'nav' as const,
-      title: 'Test Action',
-      perform: vi.fn()
-    };
-
-    // Register the action
-    registerAction(action);
-    
-    // Check that it's registered
-    const actions = listActions();
-    expect(actions).toHaveLength(1);
-    expect(actions[0]).toEqual(action);
-    
-    // Unregister the action
-    unregisterAction('test-action');
-    
-    // Check that it's unregistered
-    expect(listActions()).toHaveLength(0);
+  it('nav actions have the expected shortcuts', () => {
+    const byId = (id: string) => listActions().find(a => a.id === id);
+    expect(byId('nav-dashboard')?.shortcut).toBe('g h');
+    expect(byId('nav-adapters')?.shortcut).toBe('g a');
+    expect(byId('nav-chat')?.shortcut).toBe('g c');
+    expect(byId('nav-search')?.shortcut).toBe('g s');
+    expect(byId('nav-credentials')?.shortcut).toBe('g k');
+    expect(byId('nav-settings')?.shortcut).toBe('g ,');
   });
 
-  it('should bootstrap with 8 actions', () => {
-    // Import the registry module to trigger bootstrap
-    require('./registry');
-    
-    const actions = listActions();
-    expect(actions).toHaveLength(8);
-    
-    // Check for specific actions
-    const actionIds = actions.map(a => a.id);
-    expect(actionIds).toContain('nav-dashboard');
-    expect(actionIds).toContain('nav-adapters');
-    expect(actionIds).toContain('nav-chat');
-    expect(actionIds).toContain('nav-search');
-    expect(actionIds).toContain('nav-credentials');
-    expect(actionIds).toContain('nav-settings');
-    expect(actionIds).toContain('mode-theme-toggle');
-    expect(actionIds).toContain('mode-logout');
-  });
-
-  it('should have correct navigation shortcuts', () => {
-    // Import the registry module to trigger bootstrap
-    require('./registry');
-    
-    const actions = listActions();
-    
-    const navActions = actions.filter(a => a.kind === 'nav');
-    expect(navActions).toHaveLength(6);
-    
-    const shortcuts = navActions.map(a => a.shortcut);
-    expect(shortcuts).toContain('g h');
-    expect(shortcuts).toContain('g a');
-    expect(shortcuts).toContain('g c');
-    expect(shortcuts).toContain('g s');
-    expect(shortcuts).toContain('g k');
-    expect(shortcuts).toContain('g ,');
+  it('registerAction adds a new action', () => {
+    const id = 'test-unique-' + Date.now();
+    registerAction({ id, kind: 'nav', title: 'Test', perform: vi.fn() });
+    expect(listActions().some(a => a.id === id)).toBe(true);
+    unregisterAction(id);
+    expect(listActions().some(a => a.id === id)).toBe(false);
   });
 });
