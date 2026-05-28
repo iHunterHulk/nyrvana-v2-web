@@ -5,9 +5,10 @@ import { apiBase } from '@/lib/auth/proxy-base';
 // Catch-all proxy for all NON-AUTH requests
 export async function GET(
   request: Request,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const path = params.path.join('/');
+  const { path: pathSegments } = await params;
+  const path = pathSegments.join('/');
   const url = new URL(request.url);
   const searchParams = url.searchParams.toString();
   const upstreamUrl = `${apiBase}/api/v2/${path}${searchParams ? `?${searchParams}` : ''}`;
@@ -57,28 +58,28 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   return GET(request, { params });
 }
 
 export async function PUT(
   request: Request,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   return GET(request, { params });
 }
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   return GET(request, { params });
 }
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   return GET(request, { params });
 }
