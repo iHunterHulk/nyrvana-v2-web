@@ -1,0 +1,20 @@
+.searchPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.resultsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .resultsContainer {
+    flex-direction: row;
+  }
+}

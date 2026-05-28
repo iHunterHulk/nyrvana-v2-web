@@ -1,8 +1,14 @@
+'use client';
+
+import { usePageTitle } from '@/lib/hooks/usePageTitle';
+import { SearchPanel } from '@/components/search/SearchPanel';
+
 export default function SearchPage() {
+  usePageTitle('Search');
+  
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold">Search</h1>
-      <p className="text-sm text-secondary">Coming soon.</p>
+      <SearchPanel />
     </div>
   );
 }
