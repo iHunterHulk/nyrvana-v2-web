@@ -6,7 +6,7 @@ import ThemeToggle from './ThemeToggle';
 import { ShellContext } from './Shell';
 
 const TopBar = ({ title }: { title: string }) => {
-  const { sidebarOpen, setSidebarOpen } = useContext(ShellContext);
+  const { sidebarOpen, setSidebarOpen, setPaletteOpen } = useContext(ShellContext);
   
   return (
     <div className="h-12 border-b border-[color:var(--color-border)] flex items-center justify-between px-4">
@@ -21,7 +21,10 @@ const TopBar = ({ title }: { title: string }) => {
       
       <div className="flex items-center space-x-2">
         <ThemeToggle />
-        <kbd className="px-2 py-1 text-xs font-mono rounded bg-[color:var(--color-bg-elevated)]">
+        <kbd 
+          className="px-2 py-1 text-xs font-mono rounded bg-[color:var(--color-bg-elevated)] cursor-pointer hover:bg-[color:var(--color-bg-hover)]"
+          onClick={() => setPaletteOpen(true)}
+        >
           Cmd K
         </kbd>
         <div className="w-7 h-7 rounded-full bg-[color:var(--color-blue-vibrant)] flex items-center justify-center text-white text-xs">
