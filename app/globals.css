@@ -149,3 +149,8 @@
 :root, [data-theme="dark"] {
   --color-electric-blue: oklch(60% 0.21 252);
 }
+
+/* Smooth color transitions */
+body {
+  transition: background-color, border-color, color, fill, stroke var(--duration-slow) var(--easing-decelerate);
+}
