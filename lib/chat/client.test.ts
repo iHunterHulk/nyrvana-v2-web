@@ -38,7 +38,7 @@ describe('sendChat', () => {
       body: readableStream
     } as unknown as Response;
     
-    (apiFetch as jest.Mock).mockResolvedValue(mockResponse);
+    (apiFetch as any).mockResolvedValue(mockResponse);
     
     const onDelta = vi.fn();
     const onDone = vi.fn();
@@ -69,7 +69,7 @@ describe('sendChat', () => {
       status: 500
     } as unknown as Response;
     
-    (apiFetch as jest.Mock).mockResolvedValue(mockResponse);
+    (apiFetch as any).mockResolvedValue(mockResponse);
     
     const onError = vi.fn();
     
@@ -102,7 +102,7 @@ describe('sendChat', () => {
       body: readableStream
     } as unknown as Response;
     
-    (apiFetch as jest.Mock).mockResolvedValue(mockResponse);
+    (apiFetch as any).mockResolvedValue(mockResponse);
     
     const onDelta = vi.fn();
     const onError = vi.fn();
