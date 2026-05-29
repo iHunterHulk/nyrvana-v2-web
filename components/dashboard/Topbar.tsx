@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { logout } from '@/lib/auth/client';
 import Link from 'next/link';
+import { ShortcutsProvider } from './ShortcutsProvider';
 
 interface TopbarProps {
   title: string;
@@ -111,6 +112,7 @@ export function Topbar({ title, description }: TopbarProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <ShortcutsProvider />
     </header>
   );
 }
