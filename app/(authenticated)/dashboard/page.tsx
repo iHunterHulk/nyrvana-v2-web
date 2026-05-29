@@ -172,7 +172,7 @@ function KpiCard({ label, value, hint, tone }: { label: string; value: string; h
     amber: 'from-amber-500/20 to-amber-500/0',
   }[tone];
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/40 backdrop-blur-xl ring-1 ring-white/[0.02] p-5">
+    <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/40 backdrop-blur-xl ring-1 ring-white/[0.02] p-5 hover:translate-y-[-2px] hover:shadow-xl hover:shadow-black/20 transition-all duration-300 cursor-default">
       <div className={`pointer-events-none absolute -top-6 -right-6 h-24 w-24 rounded-full bg-gradient-to-br ${toneClass} blur-2xl`} />
       <p className="relative text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
       <p className="relative mt-1 text-2xl font-semibold tracking-tight tabular-nums">{value}</p>

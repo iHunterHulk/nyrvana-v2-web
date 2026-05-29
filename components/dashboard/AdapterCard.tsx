@@ -57,6 +57,10 @@ const statusConfig: Record<
 
 export function AdapterCard({ id, name, icon: Icon, status, message, className }: AdapterCardProps) {
   const cfg = statusConfig[status];
+  
+  // Generate a relative time string (just for demo - in a real app, this would come from a timestamp)
+  const relativeTime = 'just now';
+  
   return (
     <Link href={`/adapters/${id}`} className="cursor-pointer">
       <div
@@ -102,8 +106,11 @@ export function AdapterCard({ id, name, icon: Icon, status, message, className }
         <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
           Last checked
         </span>
-        </div>
+        <span className="text-[10px] text-muted-foreground">
+          {relativeTime}
+        </span>
       </div>
-    </Link>
+    </div>
+  </Link>
   );
 }

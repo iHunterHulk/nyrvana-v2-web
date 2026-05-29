@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { login } from '@/lib/auth/client';
@@ -14,6 +14,21 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPending, setIsPending] = useState(false);
+  const [greeting, setGreeting] = useState('Welcome back');
+
+  // Check for existing email cookie on component mount
+  useEffect(() => {
+    const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+      const [name, value] = cookie.split('=');
+      acc[name] = value;
+      return acc;
+    }, {} as Record<string, string>);
+
+    if (cookies['nv-last-email']) {
+      const emailLocalPart = cookies['nv-last-email'].split('@')[0];
+      setGreeting(`Welcome back, ${emailLocalPart}`);
+    }
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -21,6 +36,8 @@ export default function LoginPage() {
     setIsPending(true);
     try {
       await login(email, password);
+      // Set the cookie after successful login
+      document.cookie = 'nv-last-email=' + email + '; Path=/; Max-Age=' + (365*24*60*60);
       router.push('/dashboard');
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
@@ -92,7 +109,7 @@ export default function LoginPage() {
         {/* Card */}
         <div className="relative rounded-2xl border border-border/60 bg-card/40 backdrop-blur-xl p-8 shadow-2xl shadow-black/30 ring-1 ring-white/5">
           <div className="space-y-1.5 mb-6">
-            <h2 className="text-xl font-semibold tracking-tight">Welcome back</h2>
+            <h2 className="text-xl font-semibold tracking-tight">{greeting}</h2>
             <p className="text-sm text-muted-foreground">
               Sign in to continue to your dashboard.
             </p>

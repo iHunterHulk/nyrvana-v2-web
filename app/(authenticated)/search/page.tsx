@@ -99,8 +99,17 @@ export default function Page() {
             {data && (
               <div className="mt-8 space-y-4">
                 <div className="text-center py-12">
+                  <div className="flex justify-center mb-4">
+                    {[...Array(6)].map((_, i) => (
+                      <div 
+                        key={i}
+                        className="h-2 w-2 rounded-full bg-primary/30 animate-pulse"
+                        style={{ animationDelay: `${i * 100}ms`, marginLeft: i === 0 ? '0' : '0.5rem' }}
+                      />
+                    ))}
+                  </div>
                   <p className="text-sm text-muted-foreground">
-                    No results found for "{query}"
+                    Ask anything across your adapters
                   </p>
                   <p className="text-xs text-muted-foreground mt-2">
                     Try rephrasing your query or check your adapters are connected.
