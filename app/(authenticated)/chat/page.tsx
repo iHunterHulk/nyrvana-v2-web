@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { ArrowUp, Sparkles, StopCircle, User } from 'lucide-react';
+import { ArrowUp, Sparkles, StopCircle, User, Trash2 } from 'lucide-react';
 import { Topbar } from '@/components/dashboard/Topbar';
 import { Button } from '@/components/ui/button';
 import { apiFetch } from '@/lib/auth/client';
@@ -21,6 +21,28 @@ export default function ChatPage() {
   const [streaming, setStreaming] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Load chat history from localStorage on mount
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('nv-chat-history');
+    if (savedHistory) {
+      try {
+        const parsed = JSON.parse(savedHistory);
+        if (Array.isArray(parsed)) {
+          setMessages(parsed);
+        }
+      } catch (e) {
+        console.error('Failed to parse chat history', e);
+      }
+    }
+  }, []);
+
+  // Save chat history to localStorage whenever messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('nv-chat-history', JSON.stringify(messages));
+    }
+  }, [messages]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
@@ -117,6 +139,22 @@ export default function ChatPage() {
                     </button>
                   ))}
                 </div>
+              </div>
+            )}
+            {messages.length > 0 && (
+              <div className="flex justify-end">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setMessages([]);
+                    localStorage.removeItem('nv-chat-history');
+                  }}
+                  className="h-8 w-8 p-0"
+                  aria-label="Clear conversation"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
             )}
             {messages.map((m) => (
