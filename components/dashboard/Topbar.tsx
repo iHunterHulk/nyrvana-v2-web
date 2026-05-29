@@ -42,6 +42,7 @@ export function Topbar({ title, description }: TopbarProps) {
           variant="ghost"
           size="sm"
           className="h-8 gap-2 text-muted-foreground hover:text-foreground"
+          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', {key: 'k', metaKey: true}))}
         >
           <Search className="h-3.5 w-3.5" />
           <span className="text-xs">Search</span>

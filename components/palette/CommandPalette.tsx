@@ -11,7 +11,7 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { useRouter } from 'next/navigation';
-import { logout } from '@/lib/auth/client';
+import { logout, apiFetch } from '@/lib/auth/client';
 import { 
   HomeIcon, 
   PlugIcon, 
@@ -27,8 +27,31 @@ interface CommandPaletteProps {
   onOpenChange: (open: boolean) => void;
 }
 
+interface Adapter {
+  id: string;
+  name: string;
+  description?: string;
+}
+
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const router = useRouter();
+  const [adapters, setAdapters] = React.useState<Adapter[]>([]);
+
+  React.useEffect(() => {
+    const fetchAdapters = async () => {
+      try {
+        const response = await apiFetch('/providers');
+        if (response.ok) {
+          const data = await response.json();
+          setAdapters(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch adapters:', error);
+      }
+    };
+
+    fetchAdapters();
+  }, []);
 
   const handleNavigation = (path: string) => {
     router.push(path);
@@ -71,6 +94,22 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             <span>Settings</span>
           </CommandItem>
         </CommandGroup>
+        {adapters.length > 0 && (
+          <>
+            <CommandSeparator />
+            <CommandGroup heading="Adapters">
+              {adapters.map((adapter) => (
+                <CommandItem 
+                  key={adapter.id} 
+                  onSelect={() => handleNavigation(`/adapters/${adapter.id}`)}
+                >
+                  <PlugIcon className="mr-2 h-4 w-4" />
+                  <span>{adapter.name}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </>
+        )}
         <CommandSeparator />
         <CommandGroup heading="Actions">
           <CommandItem onSelect={handleLogout}>
