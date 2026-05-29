@@ -62,6 +62,8 @@ export default function DashboardPage() {
 
   useEffect(() => {
     let alive = true;
+    
+    // Initial fetch
     (async () => {
       try {
         const res = await apiFetch('/health');
@@ -74,8 +76,22 @@ export default function DashboardPage() {
         if (alive) setLoading(false);
       }
     })();
+
+    // Set up polling
+    const intervalId = setInterval(async () => {
+      try {
+        const res = await apiFetch('/health');
+        if (!res.ok) throw new Error(`${res.status}`);
+        const data = (await res.json()) as HealthResponse;
+        if (alive) setHealth(data);
+      } catch {
+        if (alive) setHealth(null);
+      }
+    }, 15000);
+
     return () => {
       alive = false;
+      clearInterval(intervalId);
     };
   }, []);
 
@@ -101,8 +117,14 @@ export default function DashboardPage() {
               <h2 className="text-base font-semibold tracking-tight">Services</h2>
               <p className="text-xs text-muted-foreground">Live health of every connected adapter.</p>
             </div>
-            <span className="text-xs text-muted-foreground font-mono">
+            <span className="text-xs text-muted-foreground font-mono flex items-center gap-2">
               {loading ? 'syncing…' : `${totalCount} adapters`}
+              {!loading && (
+                <span className="flex items-center gap-1">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse ring-2 ring-emerald-500/30"></span>
+                  <span>Live</span>
+                </span>
+              )}
             </span>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

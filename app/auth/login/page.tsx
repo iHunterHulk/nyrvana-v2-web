@@ -7,39 +7,34 @@ import { login } from '@/lib/auth/client';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<{ title: string; description: string } | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email || !password) return;
     setIsPending(true);
-    setError(null);
     try {
       await login(email, password);
       router.push('/dashboard');
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
       if (msg.includes('401') || msg.toLowerCase().includes('invalid')) {
-        setError({
-          title: 'Invalid credentials',
-          description: 'The email or password you entered is incorrect.',
+        toast.error('Invalid credentials', {
+          description: 'The email or password you entered is incorrect.'
         });
       } else if (msg.includes('429')) {
-        setError({
-          title: 'Too many attempts',
-          description: 'Please wait a moment before trying again.',
+        toast.error('Too many attempts', {
+          description: 'Please wait a moment before trying again.'
         });
       } else {
-        setError({
-          title: 'Connection error',
-          description: 'We could not reach the server. Check your connection.',
+        toast.error('Connection error', {
+          description: 'We could not reach the server. Check your connection.'
         });
       }
       setIsPending(false);
@@ -102,13 +97,6 @@ export default function LoginPage() {
               Sign in to continue to your dashboard.
             </p>
           </div>
-
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertTitle>{error.title}</AlertTitle>
-              <AlertDescription>{error.description}</AlertDescription>
-            </Alert>
-          )}
 
           <form onSubmit={onSubmit} className="space-y-4" noValidate>
             <div className="space-y-2">

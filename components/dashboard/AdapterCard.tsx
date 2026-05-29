@@ -8,6 +8,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 type Status = 'healthy' | 'degraded' | 'down' | 'pending';
 
@@ -54,15 +55,16 @@ const statusConfig: Record<
   },
 };
 
-export function AdapterCard({ name, icon: Icon, status, message, className }: AdapterCardProps) {
+export function AdapterCard({ id, name, icon: Icon, status, message, className }: AdapterCardProps) {
   const cfg = statusConfig[status];
   return (
-    <div
-      className={cn(
-        'group relative overflow-hidden rounded-2xl border border-border/50 bg-card/40 backdrop-blur-xl ring-1 ring-white/[0.02] p-5 shadow-lg shadow-black/10 transition-all duration-300 hover:border-border hover:ring-white/5 hover:translate-y-[-1px] hover:shadow-xl hover:shadow-black/20',
-        className
-      )}
-    >
+    <Link href={`/adapters/${id}`} className="cursor-pointer">
+      <div
+        className={cn(
+          'group relative overflow-hidden rounded-2xl border border-border/50 bg-card/40 backdrop-blur-xl ring-1 ring-white/[0.02] p-5 shadow-lg shadow-black/10 transition-all duration-300 hover:border-border hover:ring-white/5 hover:translate-y-[-1px] hover:shadow-xl hover:shadow-black/20',
+          className
+        )}
+      >
       {/* glow accent */}
       <div
         className={cn(
@@ -100,8 +102,8 @@ export function AdapterCard({ name, icon: Icon, status, message, className }: Ad
         <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
           Last checked
         </span>
-        <span className="text-xs text-muted-foreground">just now</span>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
