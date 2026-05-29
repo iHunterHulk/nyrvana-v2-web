@@ -1,6 +1,8 @@
 'use client';
 
-import { Search, Bell, Settings, Sun, Moon, Monitor, LogOut } from 'lucide-react';
+import { Search, Bell, Settings, Sun, Moon, Monitor, LogOut, ChevronRight } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Fragment } from 'react';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
@@ -16,6 +18,8 @@ interface TopbarProps {
 }
 
 export function Topbar({ title, description }: TopbarProps) {
+  const pathname = usePathname();
+  const segs = pathname.split('/').filter((s) => s && s !== '(authenticated)');
   const handleThemeChange = (theme: 'light' | 'dark' | 'system') => {
     document.cookie = `nv-theme=${theme}; path=/`;
     if (theme === 'system') {
@@ -32,6 +36,18 @@ export function Topbar({ title, description }: TopbarProps) {
     <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border/40 bg-background/70 backdrop-blur-xl px-4 lg:px-6">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="h-5 mr-1" />
+      {segs.length > 1 && (
+        <nav className="hidden md:flex items-center gap-1 text-xs text-muted-foreground mr-2">
+          {segs.map((s, i) => (
+            <Fragment key={i}>
+              {i > 0 && <ChevronRight className="h-3 w-3 opacity-50" />}
+              <span className={i === segs.length - 1 ? 'text-foreground font-medium capitalize' : 'capitalize'}>
+                {s}
+              </span>
+            </Fragment>
+          ))}
+        </nav>
+      )}
       <div className="flex flex-col leading-tight">
         <h1 className="text-sm font-semibold tracking-tight">{title}</h1>
         {description && (

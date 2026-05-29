@@ -97,7 +97,7 @@ export function AdapterCard({ id, name, icon: Icon, status, message, className }
       </div>
 
       {message && (
-        <p className="relative mt-4 text-xs leading-relaxed text-muted-foreground line-clamp-2">
+        <p className="absolute bottom-0 left-0 right-0 px-4 py-2 bg-card/90 backdrop-blur-md rounded-b-2xl text-[11px] text-foreground/90 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none border-t border-border/30 line-clamp-2">
           {message}
         </p>
       )}
