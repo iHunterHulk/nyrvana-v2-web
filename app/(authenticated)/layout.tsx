@@ -1,6 +1,7 @@
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/dashboard/AppSidebar';
 import { PaletteProvider } from '@/components/palette/PaletteProvider';
+import "@/lib/auth/storage-event";
 
 export default function AuthenticatedLayout({
   children,
