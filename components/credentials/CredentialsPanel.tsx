@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { getCredentials, setCredentials, deleteCredentials } from '@/lib/credentials/client';
-import { adapterFields, FieldDef } from '@/lib/credentials/schema';
+import { adapterFields } from '@/lib/credentials/schema';
 import { AdapterRow } from './AdapterRow';
 import { CredentialForm } from './CredentialForm';
+import { toast } from 'sonner';
 
 export function CredentialsPanel() {
   const [credentials, setCredentialsState] = useState<Record<string, Record<string, unknown> | null>>({});
@@ -23,6 +24,7 @@ export function CredentialsPanel() {
         setCredentialsState(Object.fromEntries(results));
       } catch (error) {
         console.error('Failed to load credentials:', error);
+        toast.error('Failed to load credentials');
       } finally {
         setLoading(false);
       }
@@ -39,8 +41,10 @@ export function CredentialsPanel() {
     try {
       await deleteCredentials(adapter);
       setCredentialsState(prev => ({ ...prev, [adapter]: null }));
+      toast.success('Credentials deleted successfully');
     } catch (error) {
       console.error('Failed to delete credentials:', error);
+      toast.error('Failed to delete credentials');
     }
   };
 
@@ -50,8 +54,10 @@ export function CredentialsPanel() {
       const updatedCreds = await getCredentials(adapter);
       setCredentialsState(prev => ({ ...prev, [adapter]: updatedCreds }));
       setEditing(null);
+      toast.success('Credentials saved successfully');
     } catch (error) {
       console.error('Failed to save credentials:', error);
+      toast.error('Failed to save credentials');
     }
   };
 
