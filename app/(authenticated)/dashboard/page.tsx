@@ -6,7 +6,7 @@ import {
   Bell,
   FileText,
   Sparkles,
-  Image as ImageIcon,
+  ImageIcon,
   Cloud,
   Rss,
   Workflow,
@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Topbar } from '@/components/dashboard/Topbar';
 import { AdapterCard } from '@/components/dashboard/AdapterCard';
+import { Skeleton } from '@/components/ui/skeleton';
 import { apiFetch } from '@/lib/auth/client';
 
 type Status = 'healthy' | 'degraded' | 'down' | 'pending';
@@ -128,19 +129,31 @@ export default function DashboardPage() {
             </span>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {adapters.map((a, i) => {
-              const entry = health?.adapters?.[a.id];
-              const status: Status = entry?.status ?? (loading ? 'pending' : 'down');
-              return (
+            {loading && !health ? (
+              Array.from({ length: 15 }).map((_, i) => (
                 <div
-                  key={a.id}
-                  className="animate-in fade-in slide-in-from-bottom-2 duration-500"
-                  style={{ animationDelay: `${i * 30}ms`, animationFillMode: 'both' }}
+                  key={i}
+                  className="rounded-2xl border border-border/50 bg-card/30 backdrop-blur-xl ring-1 ring-white/[0.02] p-5 h-[140px] flex flex-col gap-3"
                 >
-                  <AdapterCard id={a.id} name={a.name} icon={a.icon} status={status} message={entry?.message} />
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-24" />
                 </div>
-              );
-            })}
+              ))
+            ) : (
+              adapters.map((a, i) => {
+                const entry = health?.adapters?.[a.id];
+                const status: Status = entry?.status ?? (loading ? 'pending' : 'down');
+                return (
+                  <div
+                    key={a.id}
+                    className="animate-in fade-in slide-in-from-bottom-2 duration-500"
+                    style={{ animationDelay: `${i * 30}ms`, animationFillMode: 'both' }}
+                  >
+                    <AdapterCard id={a.id} name={a.name} icon={a.icon} status={status} message={entry?.message} />
+                  </div>
+                );
+              })
+            )}
           </div>
         </section>
 

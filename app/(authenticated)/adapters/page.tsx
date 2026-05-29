@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { SearchX } from 'lucide-react';
 
 interface Adapter {
   id: string;
@@ -79,44 +80,56 @@ export default function Page() {
           </div>
 
           <div className="space-y-8">
-            {Object.entries(groupedAdapters).map(([category, categoryAdapters]) => (
-              <div key={category}>
-                <div className="flex items-center gap-2 mb-3">
-                  <h2 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
-                    {category}
-                  </h2>
-                  <Badge variant="secondary" className="text-xs">
-                    {categoryAdapters.length}
-                  </Badge>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {categoryAdapters.map((adapter) => (
-                    <div 
-                      key={adapter.id}
-                      className="rounded-xl border border-border/50 bg-card/40 backdrop-blur-xl p-4 hover:bg-card/60 transition-colors"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-medium text-sm">{adapter.name}</h3>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {adapter.description}
-                          </p>
+            {Object.keys(groupedAdapters).length > 0 ? (
+              Object.entries(groupedAdapters).map(([category, categoryAdapters]) => (
+                <div key={category}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <h2 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+                      {category}
+                    </h2>
+                    <Badge variant="secondary" className="text-xs">
+                      {categoryAdapters.length}
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {categoryAdapters.map((adapter) => (
+                      <div 
+                        key={adapter.id}
+                        className="rounded-xl border border-border/50 bg-card/40 backdrop-blur-xl p-4 hover:bg-card/60 transition-colors"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-medium text-sm">{adapter.name}</h3>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {adapter.description}
+                            </p>
+                          </div>
+                          <div className={`h-2 w-2 rounded-full ${
+                            adapter.status === 'online' ? 'bg-green-500' :
+                            adapter.status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'
+                          }`}></div>
                         </div>
-                        <div className={`h-2 w-2 rounded-full ${
-                          adapter.status === 'online' ? 'bg-green-500' :
-                          adapter.status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'
-                        }`}></div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
+              ))
+            ) : searchQuery ? (
+              <div className="text-center py-12">
+                <SearchX className="mx-auto h-12 w-12 text-muted-foreground/30 mb-4" />
+                <h3 className="text-sm font-medium mb-1">No adapters match "{searchQuery}"</h3>
+                <p className="text-xs text-muted-foreground mb-4">Try adjusting your search terms</p>
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="text-xs text-primary hover:underline"
+                >
+                  Clear filter
+                </button>
               </div>
-            ))}
-            
-            {Object.keys(groupedAdapters).length === 0 && (
+            ) : (
               <div className="text-center py-12">
                 <p className="text-sm text-muted-foreground">
-                  No adapters found matching your search.
+                  No adapters found.
                 </p>
               </div>
             )}

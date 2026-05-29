@@ -63,7 +63,7 @@ export function AppSidebar() {
                       asChild
                       isActive={active}
                       tooltip={label}
-                      className="h-9 data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-medium"
+                      className="h-9 data-[active=true]:bg-primary/15 data-[active=true]:text-primary data-[active=true]:font-medium data-[active=true]:shadow-[inset_2px_0_0_0_var(--primary)]"
                     >
                       <Link href={href}>
                         <Icon className="h-4 w-4" />
