@@ -1,46 +1,29 @@
 'use client';
 
-import { StreamingAccentBar } from './StreamingAccentBar';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface MessageBubbleProps {
-  role: 'user' | 'assistant';
   content: string;
-  streaming?: boolean;
+  isUser: boolean;
+  className?: string;
 }
 
-export function MessageBubble({ role, content, streaming }: MessageBubbleProps) {
-  if (role === 'user') {
+export function MessageBubble({ content, isUser, className }: MessageBubbleProps) {
+  if (isUser) {
     return (
-      <div style={{
-        alignSelf: 'flex-end',
-        backgroundColor: 'var(--color-blue-subtle)',
-        padding: '12px',
-        borderRadius: '12px',
-        maxWidth: '720px',
-        fontSize: '14px',
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-word'
-      }}>
-        {content}
+      <div className={className}>
+        <p className="text-sm">{content}</p>
       </div>
     );
   }
-  
-  // Assistant message
+
   return (
-    <div style={{
-      alignSelf: 'flex-start',
-      backgroundColor: 'transparent',
-      padding: '12px',
-      maxWidth: '720px',
-      fontSize: '14px',
-      whiteSpace: 'pre-wrap',
-      wordBreak: 'break-word',
-      position: 'relative'
-    }}>
-      {streaming && <StreamingAccentBar streaming={true} />}
-      <div style={{ color: 'var(--color-text-primary)' }}>
-        {content}
+    <div className={className}>
+      <div className="prose prose-invert prose-sm max-w-none">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {content}
+        </ReactMarkdown>
       </div>
     </div>
   );
