@@ -4,8 +4,8 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Nyrvana V2",
-  description: "Personal Infrastructure Dashboard",
+  title: "Nyrvana",
+  description: "Personal infrastructure, in one place.",
 };
 
 export default function RootLayout({
@@ -14,8 +14,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <body>{children}</body>
+    <html
+      lang="en"
+      className={`${GeistSans.variable} ${GeistMono.variable} dark`}
+      suppressHydrationWarning
+    >
+      <body className="antialiased min-h-screen bg-background text-foreground font-sans">
+        {children}
+      </body>
     </html>
   );
 }
